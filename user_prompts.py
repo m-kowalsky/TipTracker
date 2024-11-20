@@ -39,12 +39,12 @@ def tip_prompts():
         tip_prompts()
 
 
-def write_to_file(hours, tips, month, day):
+def write_to_file(hours, tips, day):
     file1 = open(complete_file_path, "a")
 
-    file1.write(day + "\n")
-    file1.write("Hours worked: " + str(hours) + "\n")
-    file1.write("Tips made: " + str(tips) + "\n")
-    file1.write("Tips per hour: " + str(float(tips) / float(hours)))
+    file1.write(day + "\n\n")
+    file1.write("Hours worked: " + str(hours) + "\n\n")
+    file1.write("Tips made: " + str(tips) + "\n\n")
+    file1.write("Tips per hour: " + str(round(float(tips) / float(hours), 2)) + "\n\n")
     file1.close()
     print(f"Text file updated and saved to {complete_file_path}")
