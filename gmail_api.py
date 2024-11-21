@@ -39,14 +39,35 @@ def gmail_authenticate():
     try:
         service = build("gmail", "v1", credentials=creds)
     except HttpError as error:
-        print(f"An error ocurred: {error}")
+        print(f"An error has ocurred: {error}")
     return service
 
 
 def get_unread_tips_emails_ids(service, query):
-    result = service.users().messages().list(userId="me", q=query)
+    try:
+        result = service.users().messages().list(userId="me", q=query).execute()
+    except HttpError as error:
+        print(f"An error has ocurred: {error}")
+    messages = []
     message_ids = []
+    if "messages" in result:
+        messages.extend(result["messages"])
+    for i in range(len(messages)):
+        message_ids.append(messages[i]["id"])
+    return message_ids
 
-    if result:
-        for message in result:
-            message_ids.extend(result[message]["id"])
+
+def get_message_snippet(service, message_ids):
+    snippets = []
+    if message_ids:
+
+        for id in message_ids:
+            try:
+                result = service.users().messages().get(userId="me", id=id).execute()
+                snippet = result["snippet"]
+                snippets.append(snippet)
+            except HttpError as error:
+                print(f"An error has ocurred: {error}")
+    else:
+        print("No new messages")
+    return snippets
