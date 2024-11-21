@@ -71,3 +71,12 @@ def get_message_snippet(service, message_ids):
     else:
         print("No new messages")
     return snippets
+
+
+def mark_as_read(service, message_ids):
+    try:
+        service.users().messages().batchModify(
+            userId="me", body={"ids": message_ids, "removeLabelIds": ["UNREAD"]}
+        ).execute()
+    except HttpError as error:
+        print(f"An error has ocurred: {error}")

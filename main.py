@@ -1,6 +1,12 @@
 # from get_dates import get_day
 # from user_prompts import hours_prompt, make_dir, tip_prompts, write_to_file
-from gmail_api import gmail_authenticate, get_unread_tips_emails_ids, get_message_snippet
+from gmail_api import (
+    get_message_snippet,
+    get_unread_tips_emails_ids,
+    gmail_authenticate,
+    mark_as_read,
+)
+
 
 def main():
     # Get todays date
@@ -9,7 +15,7 @@ def main():
     # Make directory for tips folder on desktop if there isn't one
     # make_dir()
 
-    #Prompt user for hours and tips and then right that to a file in tips folder on desktop
+    # Prompt user for hours and tips and then right that to a file in tips folder on desktop
     # hours = hours_prompt()
     # tips = tip_prompts()
     # write_to_file(hours, tips, day)
@@ -21,5 +27,7 @@ def main():
         return
     snippets = get_message_snippet(service, message_ids)
     print(snippets)
+    mark_as_read(service, message_ids)
+
 
 main()
