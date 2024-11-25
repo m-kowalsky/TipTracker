@@ -57,7 +57,7 @@ def get_unread_tips_emails_ids(service, query):
 def get_message_snippet(service, message_id):
     if message_id:
             try:
-                result = service.users().messages().get(userId="me", id=id).execute()
+                result = service.users().messages().get(userId="me", id=message_id).execute()
                 snippet = result["snippet"]
             except HttpError as error:
                 print(f"An error has ocurred: {error}")
