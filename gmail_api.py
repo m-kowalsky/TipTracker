@@ -8,17 +8,11 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-# for dealing with attachement MIME types
-# from email.mime.text import MIMEText
-# from email.mime.multipart import MIMEMultipart
-# from email.mime.image import MIMEImage
-# from email.mime.audio import MIMEAudio
-# from email.mime.base import MIMEBase
-# from mimetypes import guess_type as guess_mime_type
+
 
 SCOPES = ["https://mail.google.com/"]
 
-
+# Authenticates the user and creates client service for api use
 def gmail_authenticate():
     creds = None
     # The file token.json stores the user's access and refresh tokens, and is
@@ -42,7 +36,7 @@ def gmail_authenticate():
         print(f"An error has ocurred: {error}")
     return service
 
-
+# Get message ids of all unread messages with a query
 def get_unread_tips_emails_ids(service, query):
     try:
         result = service.users().messages().list(userId="me", q=query).execute()
@@ -54,25 +48,34 @@ def get_unread_tips_emails_ids(service, query):
         messages.extend(result["messages"])
     for i in range(len(messages)):
         message_ids.append(messages[i]["id"])
+    if not message_ids:
+        print("No new messages")
     return message_ids
 
-
-def get_message_snippet(service, message_ids):
-    snippets = []
-    if message_ids:
-
-        for id in message_ids:
+# Gets the snippet info for message.  It's basically the whole body of the message as 
+# we don't have a message that's longer than what the snippet returns.
+def get_message_snippet(service, message_id):
+    if message_id:
             try:
                 result = service.users().messages().get(userId="me", id=id).execute()
                 snippet = result["snippet"]
-                snippets.append(snippet)
             except HttpError as error:
                 print(f"An error has ocurred: {error}")
     else:
         print("No new messages")
-    return snippets
+    return snippet
 
+# Get the date header value of a message and returns the value
+def get_date(service, message_id):
+    message_part = service.users().messages().get(userId="me", id=message_id).execute()
+    payload = message_part["payload"]
+    headers = payload["headers"]
+    for header in headers:
+        if header["name"] == "Date":
+            date = header["value"]
+    return date
 
+# Takes a list of message ids and removes the UNREAD label from all of the messages
 def mark_as_read(service, message_ids):
     try:
         service.users().messages().batchModify(
