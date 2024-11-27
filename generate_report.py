@@ -1,17 +1,15 @@
 import os
 
-dir_path = "Desktop/Tips"
 
-
-def get_tips_and_hours(message_dict):
+def get_daily_tips_and_hours(message_dict):
     total_hours = 0
     total_tips = 0
     for id in message_dict:
         total_hours += message_dict[id]["snippet"]["hours"]
         total_tips += message_dict[id]["snippet"]["tips"]
-    formatted_tips = f"${total_tips:.2f}"
+    dollar_formatted_tips = f"${total_tips:.2f}"
 
-    return formatted_tips, total_hours
+    return dollar_formatted_tips, total_tips, total_hours
 
 
 def daily_tips_report_to_append_to_file(message_id, tips, hours):
@@ -21,10 +19,19 @@ def daily_tips_report_to_append_to_file(message_id, tips, hours):
     template = template_file.read()
     template_file.close()
     template = template.replace("<date>", date)
-    template = template.replace("<hours>", hours)
-    template = template.replace("<tips>", tips)
-    return template
-    
+    template = template.replace("<daily hours>", hours)
+    template = template.replace("<daily tips>", tips)
+    ...
+
+
+def write_template_to_monthly_tip_file(template_to_append, month):
+    dir_path = "~/Desktop/Tips"
+    file_path = os.path.join(dir_path, month, "Tips.txt")
+    if not os.path.exists(dir_path):
+        os.mkdir(dir_path)
+    monthly_tips_file = open(file_path, "r+")
+    monthly_tips_file.close()
+    ...
 
 
 def get_month(date):
