@@ -1,5 +1,6 @@
-import os
 import json
+import os
+
 
 def get_daily_tips_and_hours(message_dict):
     total_hours = 0
@@ -11,26 +12,34 @@ def get_daily_tips_and_hours(message_dict):
 
     return dollar_formatted_tips, total_tips, total_hours
 
-def tips_hours_to_json(tips, hours, month):
-    # Initial data dump if data.json doesn't exist yet
+
+def write_tips_hours_to_json(tips, hours, date):
+    month = get_month(date)
+    year = get_year(date)
+
+    # Create json file if data.json doesn't exist yet
     if not os.path.exists("data.json"):
         data = {
-            month: {
-            "tips": tips, 
-            "hours": hours
-            }
+            year: {
+                month: {"tips": tips, "hours": hours},
+            },
         }
         with open("data.json", "w+") as json_file:
             json.dump(data, json_file)
+    # Open json file and load to data
     with open("data.json", "r+") as json_file:
         data = json.load(json_file)
-    
-    data[month]["hours"] += hours
-    data[month]["tips"] += tips
+    # Create new year and month if not in data.json
+    if year not in data:
+        data[year] = {month: {"tips": tips, "hours": hours}}
+    if month not in data[year]:
+        data[year][month] = {"tips": tips, "hours": hours}
+    else:
+        data[year][month]["hours"] += hours
+        data[year][month]["tips"] += tips
 
-    with open("data.json", "w") as json_file:    
+    with open("data.json", "w") as json_file:
         json.dump(data, json_file, indent=4)
-
 
 
 def daily_tips_report_to_append_to_file(message_id, tips, hours):
@@ -42,7 +51,7 @@ def daily_tips_report_to_append_to_file(message_id, tips, hours):
     template = template.replace("<date>", date)
     template = template.replace("<daily hours>", hours)
     template = template.replace("<daily tips>", tips)
-    #replace <total_hours> and <total_tips> with data from json data file
+    # replace <total_hours> and <total_tips> with data from json data file
     ...
 
 
@@ -54,7 +63,7 @@ def write_template_to_monthly_tip_file(template_to_append, month):
         os.mkdir(dir_path)
     monthly_tips_file = open(file_path, "r+")
     monthly_tips_file.close()
-    
+
     ...
 
 
@@ -63,4 +72,12 @@ def get_month(date):
     month = date_list[2]
     return month
 
-tips_hours_to_json(123.45, 4.5, "Nov")
+
+def get_year(date):
+    date_list = date.split()
+    year = date_list[3]
+    return year
+
+
+date = "Wed, 27 Nov 2024"
+write_tips_hours_to_json(123.45, 4.5, date)
