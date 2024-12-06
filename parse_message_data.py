@@ -5,8 +5,8 @@ from gmail_api import get_date, get_message_snippet
         {
         "date": date,
         "snippet": {
-            "Hours": hours,
-            "Tips": tips
+            "hours": hours,
+            "tips": tips
             },
         }
     }
@@ -27,8 +27,8 @@ def snippet_to_dict(snippet):
     snippet = snippet.split()
     data = {}
     for i in range(len(snippet)):
-        if snippet[i] == "Hours":
-            data[snippet[i].lower()] = float(snippet[i + 1])
-        if snippet[i] == "Tips":
-            data[snippet[i].lower()] = float(snippet[i + 1])
+        if snippet[i] == "Hours" or snippet[i] == "hours":
+            data[snippet[i].lower()] = round(float(snippet[i + 1]), 2)
+        if snippet[i] == "Tips" or snippet[i] == "tips":
+            data[snippet[i].lower()] = round(float(snippet[i + 1]), 2)
     return data

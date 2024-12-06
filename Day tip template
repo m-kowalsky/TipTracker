@@ -1,7 +1,7 @@
 Date:
         <date>
 
-Tips: <daily tips>
+Tips: $<daily tips>
 
 Hours: <daily hours>
 
@@ -9,7 +9,8 @@ Hours: <daily hours>
 <month> Totals to Date
 -----------------------------
 Total Hours for <month>: <total hours>
-Total Tips for <month>: <total tips>
+Total Tips for <month>: $<total tips>
 
 -----------------------------
 -----------------------------
+

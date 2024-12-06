@@ -20,13 +20,13 @@ def main():
         # get date
         date = get_date(service, id)
         # get daily tips and hours
-        tips_to_dollars, daily_hours, tips = get_daily_tips_and_hours(message_data, id)
+        daily_hours, tips = get_daily_tips_and_hours(message_data, id)
         # write tips and hours to json data file
         write_tips_hours_to_json(tips, daily_hours, date)
         # report to tip template
-        template = daily_tips_report_to_append_to_file(id, tips_to_dollars, daily_hours, date)
+        template = daily_tips_report_to_append_to_file(tips, daily_hours, date)
         # append template to tips file
         append_template_to_monthly_tip_file(template, date)
-        
+    # mark all messages as read
 
 main()
