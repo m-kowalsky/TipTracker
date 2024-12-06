@@ -1,7 +1,8 @@
 import os
 
+from email.mime.text import MIMEText
 # for encoding/decoding messages in base64
-# from base64 import urlsafe_b64decode
+import base64
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -83,3 +84,22 @@ def mark_as_read(service, message_ids):
         ).execute()
     except HttpError as error:
         print(f"An error has ocurred: {error}")
+
+def create_message(sender, to, subject, message_text):
+    message = MIMEText(message_text)
+    message['to'] = to
+    message['from'] = sender
+    message['subject'] = subject
+    raw_message = base64.urlsafe_b64encode(message.as_string().encode("utf-8"))
+    return {
+        'raw': raw_message.decode('utf-8')
+    }
+
+def send_message(service, user_id, message):
+  try:
+    message = service.users().messages().send(userId=user_id, body=message).execute()
+    print('Message Id: %s' % message['id'])
+    return message
+  except Exception as e:
+    print('An error occurred: %s' % e)
+    return None
