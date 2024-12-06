@@ -2,16 +2,14 @@ import json
 import os
 
 
-def get_daily_tips_and_hours(message_dict):
-    total_hours = 0
-    total_tips = 0
-    for id in message_dict:
-        total_hours += message_dict[id]["snippet"]["hours"]
-        total_tips += message_dict[id]["snippet"]["tips"]
-    dollar_formatted_tips = f"${total_tips:.2f}"
+def get_daily_tips_and_hours(message_dict, message_id):
 
-    return dollar_formatted_tips, total_tips, total_hours
+    hours = message_dict[message_id]["snippet"]["hours"]
+    tips = message_dict[message_id]["snippet"]["tips"]
+    dollar_formatted_tips = f"${tips:.2f}"
 
+    return dollar_formatted_tips, hours, tips
+    
 
 def write_tips_hours_to_json(tips, hours, date):
     month = get_month(date)
@@ -42,8 +40,7 @@ def write_tips_hours_to_json(tips, hours, date):
         json.dump(data, json_file, indent=4)
 
 
-def daily_tips_report_to_append_to_file(message_id, tips, hours):
-    date = message_id["date"]
+def daily_tips_report_to_append_to_file(message_id, tips_to_dollars, hours, date):
     year = get_year(date)
     month = get_month(date)
     template_path = "/Users/michaelkowalsky/workspace/github.com/KarlHavoc/PersonalProject1/Day tip template"
@@ -52,7 +49,7 @@ def daily_tips_report_to_append_to_file(message_id, tips, hours):
     template_file.close()
     template = template.replace("<date>", date)
     template = template.replace("<daily hours>", hours)
-    template = template.replace("<daily tips>", tips)
+    template = template.replace("<daily tips>", tips_to_dollars)
     # replace <total_hours> and <total_tips> with data from json data file
     with open("data.json", "r") as json_file:
         data = json.load(json_file)
@@ -62,8 +59,11 @@ def daily_tips_report_to_append_to_file(message_id, tips, hours):
     template = template.replace("<total tips>", total_tips)
     template = template.replace("<month>", month)
 
+    return template
 
-def write_template_to_monthly_tip_file(template_to_append, month):
+
+def append_template_to_monthly_tip_file(template_to_append, date):
+    month = get_month(date)
     # take the template to append and write it to the Month/Tips.txt file
     main_dir_path = "~/Desktop/Tips"
     tips_file_dir = os.path.join(main_dir_path, month)
