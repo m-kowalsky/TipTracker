@@ -1,6 +1,3 @@
-Personal Tracker app for tips that saves data to a pdf
+# Tip Tracker
 
-
-Roadmap:
-
-Start with command line functionality and expand it to either text file or email
+Tip tracker app that utilizes Gmail API to get data from an email body and aggregate it to a local text file. 
